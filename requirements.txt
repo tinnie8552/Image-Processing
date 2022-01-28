@@ -1,0 +1,7 @@
+PIL
+cv2
+numpy
+matplotlib
+skimage.color
+math
+streamlit_drawable_canvas
