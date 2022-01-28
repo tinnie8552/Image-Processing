@@ -1,6 +1,5 @@
 pillow
-opencv-python
+opencv-python-headless
 numpy
 matplotlib
 scikit-image
-python-math
