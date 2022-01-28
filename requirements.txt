@@ -1,7 +1,6 @@
-PIL
-cv2
+pillow
+opencv-python
 numpy
 matplotlib
-skimage.color
-math
-streamlit_drawable_canvas
+scikit-image
+python-math
