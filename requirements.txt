@@ -1,6 +1,7 @@
 pillow
 opencv-python-headless
+opencv-contrib-python
 numpy
 matplotlib
 scikit-image
-streamlit-drawable-canvas
+streamlit_drawable_canvas==0.8.0
