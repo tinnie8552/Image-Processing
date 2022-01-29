@@ -91,7 +91,7 @@ def welcome():
         magnitude_spectrum1  = (magnitude_spectrum1*255).astype('uint8')
         st.write('Your image in frequency domain:')
         st.image(magnitude_spectrum1,use_column_width=True,clamp=True)
-        # add RGB 3 channel
+        # Printing the frequency domain representation of each of the three channels in the RGB image
         st.write('Your image in frequency domain in RGB channel:')
         fig, ax = plt.subplots(1, up_img_0.shape[2])
         subtitle = ['Red Channel', 'Green Channel', 'Blue Channel']
@@ -117,7 +117,7 @@ def fliter(D,image,type):
     type : Type of filter
 
     Returns
-    base :  Desicion on pixel
+    base :  Decision on pixel
     """
     base = np.zeros(image.shape[:2])
     row, col = image.shape[:2]
@@ -127,7 +127,7 @@ def fliter(D,image,type):
             if type == 'Lowpass':
                 if distance((i,j),center) < D:
                     base[i,j] = 1
-            elif type == 'highpass':
+            elif type == 'Highpass':
                 if distance((i,j),center) > D:
                     base[i,j] = 1
             else:
@@ -147,7 +147,7 @@ def fourier(image):
             st.write('The size of the image is ', image.shape)
             st.write('Your image in frequency domain of three color channel (RGB)')
         else:
-            fft = np.fft.fftshift(np.fft.fft2((image[:, :, i - 1])))
+            fft = np.fft.fftshift(np.fft.fft2((image[:, :, i - 1]))) #Fourier transform on three channels
             image_fourier.append(fft)
             ax[i-1].imshow(np.log(abs(image_fourier[i - 1])), cmap='gray')
             ax[i-1].set_title(subtitle[i-1], fontsize=5)
@@ -171,7 +171,7 @@ def filter_img():
         image_fourier = fourier(image) #Taking the Fourier transform of the input image
         type_filter = st.radio(
             "Type of filter",
-            ('Lowpass', 'highpass', 'bandpass')) #Choosing the type of filter to appply on the image
+            ('Lowpass', 'Highpass', 'Bandpass')) #Choosing the type of filter to appply on the image
         if type_filter == 'Lowpass':
             st.latex(r'''H(x,y) =
                 \begin{cases}
@@ -181,7 +181,7 @@ def filter_img():
             st.write(r'''Formula for low pass filter where $d$ is the positive constant and $D(x,y)$ is the
             distance between a point $(x,y)$ in the frequency domain and the center of the frequency rectangle''')
             D = st.number_input('Input d', min_value=0.0)
-        elif type_filter == 'highpass':
+        elif type_filter == 'Highpass':
             st.latex(r'''H(x,y) =
                 \begin{cases}
                         1       & \quad \text{if } D(x,y) \geq d\\
@@ -209,6 +209,7 @@ def filter_img():
             st.latex(r'''F \times H''')
             st.write(r'''where $F,$ $H$ is the fourier transform of the original image and filter''')
 
+            # Show the effect of filter on images in frequency domain and do the inverse fourier transform
             st.write('There is the picture of the new image through filter in fourier transform of three channel')
             fig, ax = plt.subplots(1, image.shape[2])
             subtitle = ['Red Channel', 'Green Channel', 'Blue Channel']
@@ -216,16 +217,17 @@ def filter_img():
             inverse_image = []
 
             for i in range(image.shape[2]):
-                image_filter = image_fourier[i] * fliter(D, image, type_filter)
+                image_filter = image_fourier[i] * fliter(D, image, type_filter) #Calculate the effect of filter
                 ax[i].imshow(np.log(1+abs(image_filter)), cmap='gray')
                 ax[i].set_title(subtitle[i - 1], fontsize=5)
                 ax[i].tick_params(labelsize=5)
-                inverse_image.append(abs(np.fft.ifft2(image_filter)))
+                inverse_image.append(abs(np.fft.ifft2(image_filter))) #Inverse fourier transform to inverse_image
                 if np.max(inverse_image[i]) != 0:
                     inverse_image[i] = inverse_image[i] / np.max(inverse_image[i])
 
             st.pyplot(fig)
 
+            #Show the inverse fourier transform image
             st.write('Upon taking the inverse Fourier transform we see the modified image below:')
             final_image = np.dstack([(inverse_image[0]*255).astype(int),
                                      (inverse_image[1]*255).astype(int),
